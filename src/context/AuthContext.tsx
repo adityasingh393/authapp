@@ -12,7 +12,8 @@ type AuthAction =
   | { type: 'LOGIN'; payload: User }
   | { type: 'LOGOUT' }
   | { type: 'SET_USERS'; payload: User[] }
-  | { type: 'SET_CURRENT_USER'; payload: User | null };
+  | { type: 'SET_CURRENT_USER'; payload: User | null }
+  | { type: 'EDIT_USER'; payload: User };
 
 const AuthContext = createContext<{
   state: AuthState;
@@ -20,12 +21,14 @@ const AuthContext = createContext<{
   updateUsers: (users: User[]) => Promise<void>;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   loading: boolean;
+  editUser: (user: User) => Promise<void>;
 }>({
   state: { users: [], currentUser: null },
   dispatch: () => null,
   updateUsers: async () => {},
   setLoading: () => {},
   loading: false,
+  editUser: async () => {},
 });
 
 const authReducer = (state: AuthState, action: AuthAction): AuthState => {
@@ -40,6 +43,13 @@ const authReducer = (state: AuthState, action: AuthAction): AuthState => {
       return { ...state, users: action.payload };
     case 'SET_CURRENT_USER':
       return { ...state, currentUser: action.payload };
+    case 'EDIT_USER':
+      return {
+        ...state,
+        users: state.users.map(user =>
+          user.uid === action.payload.uid ? action.payload : user
+        ),
+      };
     default:
       return state;
   }
@@ -66,8 +76,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }, 2000);
   };
 
+  const editUser = async (updatedUser: User) => {
+    setLoading(true);
+    const updatedUsers = state.users.map(user =>
+      user.uid === updatedUser.uid ? updatedUser : user
+    );
+    setTimeout(async () => {
+      await setStoredUsers(updatedUsers);
+      dispatch({ type: 'EDIT_USER', payload: updatedUser });
+      setLoading(false);
+    }, 2000);
+  };
+
   return (
-    <AuthContext.Provider value={{ state, dispatch, updateUsers, setLoading, loading }}>
+    <AuthContext.Provider
+      value={{ state, dispatch, updateUsers, setLoading, loading, editUser }}
+    >
       {children}
     </AuthContext.Provider>
   );

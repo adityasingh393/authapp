@@ -1,14 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import '../App.css';
+import { User } from '../types/User';
 
 const Profile: React.FC = () => {
   const { uid } = useParams<{ uid: string }>();
   const navigate = useNavigate();
-  const { state } = useAuth();
+  const { state, editUser } = useAuth();
   const user = state.users.find(u => u.uid === uid);
   const currentUser = state.currentUser;
+
+  const [editMode, setEditMode] = useState(false);
+  const [editData, setEditData] = useState<Partial<User>>({});
 
   if (!currentUser) {
     navigate('/login');
@@ -20,17 +24,56 @@ const Profile: React.FC = () => {
     return null;
   }
 
+  const handleChange = (field: keyof User, value: string) => {
+    setEditData({
+      ...editData,
+      [field]: value,
+    });
+  };
+
+  const handleSave = async () => {
+    const updatedUser = { ...user, ...editData } as User;
+    await editUser(updatedUser);
+    setEditMode(false);
+  };
+
   return (
     <div className='container'>
       <h2>Profile</h2>
       <div>
-       <span>Name: {user.name}</span>
-      </div>
-      <div>  
-       <span>Email: {user.email}</span>
+        <span>Name: </span>
+        {editMode ? (
+          <input
+            type="text"
+            value={editData.name || user.name}
+            onChange={(e) => handleChange('name', e.target.value)}
+          />
+        ) : (
+          <span>{user.name}</span>
+        )}
       </div>
       <div>
-      <span>Role: {user.role}</span>
+        <span>Email: </span>
+        {editMode ? (
+          <input
+            type="email"
+            value={editData.email || user.email}
+            onChange={(e) => handleChange('email', e.target.value)}
+          />
+        ) : (
+          <span>{user.email}</span>
+        )}
+      </div>
+      <div>
+        <span>Role: </span>
+        <span>{user.role}</span>
+      </div>
+      <div>
+        {editMode ? (
+          <button onClick={handleSave}>Save</button>
+        ) : (
+          <button onClick={() => setEditMode(true)}>Edit</button>
+        )}
       </div>
     </div>
   );

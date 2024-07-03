@@ -11,6 +11,7 @@ button {
   padding: 10px;
   background-color: #007bff;
   color: #007bff;
+  margin-inline-end: 20px;
   font-size: 16px;
   border: none;
   border-radius: 5px;
@@ -22,7 +23,7 @@ button {
   max-width: 400px;
   width: 100%;
   padding: 20px;
-  border: 1px solid #ddd;
+  border: 1px solid #007bff;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
@@ -87,6 +88,7 @@ form button:hover {
   height: 100vh;
   flex-direction: column;
 }
+
 
 .loader {
   border: 16px solid #f3f3f3;
