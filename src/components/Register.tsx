@@ -1,23 +1,38 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import { useAuth } from '../context/AuthContext';
 import { User } from '../types/User';
-import Loader  from './Loader';
+import Loader from './Loader';
 import '../App.css';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+
+type FormData = {
+  name: string;
+  email: string;
+  password: string;
+  role: 'user' | 'admin';
+};
+
+const schema = yup.object().shape({
+  name: yup.string().required('Name is required'),
+  email: yup.string().email('Invalid email format').required('Email is required'),
+  password: yup.string().min(6, 'Password must be at least 6 characters').required('Password is required'),
+  role: yup.string().oneOf(['user', 'admin'], 'Invalid role').required('Role is required')
+});
 
 const Register: React.FC = () => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [role, setRole] = useState<'user' | 'admin'>('user');
+  const { control, handleSubmit, formState: { errors } } = useForm<FormData>({
+    resolver: yupResolver(schema)
+  });
   const navigate = useNavigate();
   const { state, dispatch, updateUsers, loading, setLoading } = useAuth();
 
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit: SubmitHandler<FormData> = async (data) => {
     setLoading(true);
-    const newUser: User = { uid: uuidv4(), name, email, password, role };
+    const newUser: User = { uid: uuidv4(), ...data };
     const updatedUsers = [...state.users, newUser];
     setTimeout(async () => {
       await updateUsers(updatedUsers);
@@ -31,33 +46,60 @@ const Register: React.FC = () => {
 
   return (
     <div className='container'>
-      {loading && <Loader/>}
+      {loading && <Loader />}
       {!loading && (
         <>
           <h2>Register</h2>
-          <form onSubmit={handleRegister}>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <div>
               <label>Name*:</label>
-              <input type="text" required value={name} onChange={(e) => setName(e.target.value)} />
+              <Controller
+                name="name"
+                control={control}
+                defaultValue=""
+                render={({ field }) => <input {...field} />}
+              />
+              {errors.name && <span>{errors.name.message}</span>}
             </div>
             <div>
               <label>Email*:</label>
-              <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+              <Controller
+                name="email"
+                control={control}
+                defaultValue=""
+                render={({ field }) => <input type="email" {...field} />}
+              />
+              {errors.email && <span>{errors.email.message}</span>}
             </div>
             <div>
               <label>Password*:</label>
-              <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} />
+              <Controller
+                name="password"
+                control={control}
+                defaultValue=""
+                render={({ field }) => <input type="password" {...field} />}
+              />
+              {errors.password && <span>{errors.password.message}</span>}
             </div>
             <div>
               <label>Role*:</label>
-              <select value={role} onChange={(e) => setRole(e.target.value as 'user' | 'admin')}>
-                <option value="user">User</option>
-                <option value="admin">Admin</option>
-              </select>
+              <Controller
+                name="role"
+                control={control}
+                defaultValue="user"
+                render={({ field }) => (
+                  <select {...field}>
+                    
+                    <option value="user">User</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                )}
+              />
+              {errors.role && <span>{errors.role.message}</span>}
             </div>
             <button type="submit">Register</button>
           </form>
-          <button onClick={() => { navigate('/login') }}>Go To Login</button>
+          <button className='button' onClick={() => { navigate('/login') }}>Go To Login</button>
         </>
       )}
     </div>

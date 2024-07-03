@@ -24,16 +24,13 @@ const Profile: React.FC = () => {
     <div className='container'>
       <h2>Profile</h2>
       <div>
-        <label>Name:</label>
-        <span>{user.name}</span>
+       <span>Name: {user.name}</span>
+      </div>
+      <div>  
+       <span>Email: {user.email}</span>
       </div>
       <div>
-        <label>Email:</label>
-        <span>{user.email}</span>
-      </div>
-      <div>
-        <label>Role:</label>
-        <span>{user.role}</span>
+      <span>Role: {user.role}</span>
       </div>
     </div>
   );

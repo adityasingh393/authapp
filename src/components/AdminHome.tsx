@@ -9,14 +9,25 @@ const AdminHome: React.FC = () => {
   return (
     <div className='container'>
       <h2>Admin Home</h2>
-      <ul>
+      <ol>
         {state.users.map(user => (
           <li key={user.uid}>
-            <span>{user.name}</span> - <span>{user.email}</span> - <span>{user.role}</span>
+          <div>
+          <span>Name: {user.name}</span>
+            </div> 
+            <div>
+            <span>Email: {user.email}</span>
+            </div>
+            <div>
+            <span>Role: {user.role}</span>
+            </div>
+            <div>
+
             <button onClick={() => navigate(`/profile/${user.uid}`)}>View Profile</button>
+            </div>
           </li>
         ))}
-      </ul>
+      </ol>
     </div>
   );
 };
