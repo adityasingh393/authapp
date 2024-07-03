@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer, ReactNode, useEffect } from 'react';
+import React, { createContext, useContext, useReducer, ReactNode, useEffect, useState } from 'react';
 import { useLocalForage } from '../hooks/useLocalForage';
 import { User } from '../types/User';
 
@@ -18,10 +18,14 @@ const AuthContext = createContext<{
   state: AuthState;
   dispatch: React.Dispatch<AuthAction>;
   updateUsers: (users: User[]) => Promise<void>;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  loading: boolean;
 }>({
   state: { users: [], currentUser: null },
   dispatch: () => null,
   updateUsers: async () => {},
+  setLoading: () => {},
+  loading: false,
 });
 
 const authReducer = (state: AuthState, action: AuthAction): AuthState => {
@@ -47,18 +51,23 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     users: [],
     currentUser: null,
   });
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     dispatch({ type: 'SET_USERS', payload: storedUsers });
   }, [storedUsers]);
 
   const updateUsers = async (users: User[]) => {
-    await setStoredUsers(users);
-    dispatch({ type: 'SET_USERS', payload: users });
+    setLoading(true);
+    setTimeout(async () => {
+      await setStoredUsers(users);
+      dispatch({ type: 'SET_USERS', payload: users });
+      setLoading(false);
+    }, 2000);
   };
 
   return (
-    <AuthContext.Provider value={{ state, dispatch, updateUsers }}>
+    <AuthContext.Provider value={{ state, dispatch, updateUsers, setLoading, loading }}>
       {children}
     </AuthContext.Provider>
   );
