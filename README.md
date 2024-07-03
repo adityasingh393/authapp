@@ -1,3 +1,9 @@
+# Live Link of the project
+
+[Click here](https://authapp-mqhx.onrender.com/) to try it out 
+
+
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
