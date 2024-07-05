@@ -77,11 +77,11 @@ const AdminHome: React.FC = () => {
             </div>
             <div>
               {editMode[user.uid] ? (
-                <button onClick={() => handleSave(user.uid)}>Save</button>
+                <button  className="button" onClick={() => handleSave(user.uid)}>Save</button>
               ) : (
-                <button onClick={() => handleEdit(user.uid)}>Edit</button>
+                <button  className="button" onClick={() => handleEdit(user.uid)}>Edit</button>
               )}
-              <button onClick={() => navigate(`/profile/${user.uid}`)}>View Profile</button>
+              <button  className="button" onClick={() => navigate(`/profile/${user.uid}`)}>View Profile</button>
             </div>
           </li>
         ))}

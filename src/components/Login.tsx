@@ -28,11 +28,8 @@ const Login: React.FC = () => {
     setLoading(true);
     setTimeout(() => {
       const user = state.users.find(u => u.email === data.email && u.password === data.password);
-      console.log('Attempting login with email:', data.email, 'and password:', data.password);
-      console.log('All users:', state.users);
       if (user) {
         dispatch({ type: 'LOGIN', payload: user });
-        console.log('Logged in user:', user);
         setLoading(false);
         if (user.role === 'admin') {
           navigate('/admin');
@@ -73,9 +70,9 @@ const Login: React.FC = () => {
               />
               {errors.password && <span>{errors.password.message}</span>}
             </div>
-            <button type="submit">Login</button>
+            <button className="button" type="submit">Login</button>
           </form>
-          <button onClick={() => { navigate('/') }}>Go to Register</button>
+          <button className='button' onClick={() => navigate('/')}>Go to Register</button>
         </>
       )}
     </div>

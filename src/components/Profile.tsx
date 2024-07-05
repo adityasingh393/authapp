@@ -66,15 +66,23 @@ const Profile: React.FC = () => {
       </div>
       <div>
         <span>Role: </span>
-        <span>{user.role}</span>
-      </div>
-      <div>
         {editMode ? (
-          <button onClick={handleSave}>Save</button>
+          <select
+            value={editData.role || user.role}
+            onChange={(e) => handleChange('role', e.target.value)}
+          >
+            <option value="user">User</option>
+            <option value="admin">Admin</option>
+          </select>
         ) : (
-          <button onClick={() => setEditMode(true)}>Edit</button>
+          <span>{user.role}</span>
         )}
       </div>
+      {editMode ? (
+        <button onClick={handleSave}>Save</button>
+      ) : (
+        <button className="button" onClick={() => setEditMode(true)}>Edit</button>
+      )}
     </div>
   );
 };
