@@ -9,8 +9,8 @@ const AdminHome: React.FC = () => {
   const navigate = useNavigate();
   const [editMode, setEditMode] = useState<{ [key: string]: boolean }>({});
   const [editData, setEditData] = useState<{ [key: string]: Partial<User> }>({});
-
-  const handleEdit = (uid: string) => {
+//can use custom hooks for admin functionality
+  const handleEdit  = (uid: string) => {
     setEditMode({ ...editMode, [uid]: true });
     const user = state.users.find(user => user.uid === uid);
     if (user) {
